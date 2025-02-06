@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Signup</title>
+    <link rel="stylesheet" href="{% static 'css/accounts/style.css' %}">
+</head>
+<body>
+    <div class="cont">
+        <div class="form sign-in">
+            <form action="{% url 'login' %}" method="post">
+                {% csrf_token %}
+                <h2>Welcome Back</h2>
+                <label>
+                    <span>Username</span>
+                    <input type="text" name="username" required>
+                </label>
+                <label>
+                    <span>Password</span>
+                    <input type="password" name="password" required>
+                </label>
+                <p class="forgot-pass">Forgot your password?</p>
+                <button type="submit" class="submit">Login</button>
+            </form>
+        </div>
+
+        <div class="sub-cont">
+            <div class="img">
+                <div class="img__text m--up">
+                    <h2>New here?</h2>
+                    <p>Sign up and discover great opportunities!</p>
+                </div>
+                <div class="img__text m--in">
+                    <h2>One of us?</h2>
+                    <p>If you already have an account, just log in.</p>
+                </div>
+                <div class="img__btn">
+                    <span class="m--up">Sign Up</span>
+                    <span class="m--in">Login</span>
+                </div>
+            </div>
+            <form action="{% url 'register' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form sign-up" style="width: 640px; height: 100%; padding: 40px 40px;">
+                    <h2>Create Account</h2>
+                    <label>
+                        <span>Username</span>
+                        <input type="text" name="username" required>
+                    </label>
+                    <div style="display: flex; gap: 10px;">
+                        
+                        <label style="flex: 1;">
+                            <span>First Name</span>
+                            <input type="text" name="first_name" required>
+                        </label>
+                        <label style="flex: 1;">
+                            <span>Last Name</span>
+                            <input type="text" name="last_name" required>
+                        </label>
+                    </div>
+                    
+                    <label>
+                        <span>Email</span>
+                        <input type="email" name="email" required>
+                    </label>
+                    <div style="display: flex; gap: 10px;">
+                        
+                    </div>
+                    <label>
+                        <span>Profile Picture</span>
+                        <input type="file" name="profile_pic" accept="image/*">
+                    </label>
+                    <label>
+                        <span>Phone Number</span>
+                        <input type="tel" name="ph_no" required>
+                    </label>
+                    <div style="display: flex; gap: 10px;">
+                        <label>
+                            <span>Password</span>
+                            <input type="password" name="password" required>
+                        </label>
+                        <label>
+                            <span>Confirm Password</span>
+                            <input type="password" name="cpassword" required>
+                        </label> 
+                    </div>
+                    
+                    <button type="submit" class="submit">Sign Up</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.querySelector(".img__btn").addEventListener("click", function() {
+            document.querySelector(".cont").classList.toggle("s--signup");
+        });
+    </script>
+</body>
+</html>
