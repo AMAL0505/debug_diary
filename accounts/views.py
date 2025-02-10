@@ -1,8 +1,10 @@
 # accounts/views.py
-from django.shortcuts import render, redirect
+from django.shortcuts import render,get_object_or_404, redirect
 from django.contrib import messages
 from .models import LoginTable, UserProfile 
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.hashers import make_password, check_password
+from django.contrib import messages
 
 
 
@@ -74,6 +76,9 @@ def userLogin(request):
                     messages.success(request, "Login successful!")
                     return redirect('adminhomepage',user_id=user_profile.id)
             if check_password(password, user_profile.password):
+                if user_profile.is_blocked:
+                    messages.error(request, "Your account is blocked.")
+                    return redirect('login') # Redirect to a home page or error page
                 # Successful login logic here (e.g., setting session data)
                 messages.success(request, "Login successful!")
                 
@@ -136,3 +141,30 @@ def changePassword(request,user_id):
             userprofile.save()
             return redirect('userprofile',user_id=user_id)
     return render(request, 'user/change_password.html',{'userprofile':userprofile})
+
+
+def is_admin(user):
+    try:
+        userprofile = UserProfile.objects.get(username=user.username)  # Ensure we get the UserProfile instance
+        login_entry = LoginTable.objects.get(user_profile=userprofile)
+        return login_entry.type.lower() == "admin"  # Check if user is an admin
+    except (UserProfile.DoesNotExist, LoginTable.DoesNotExist):
+        return False  # Default to non-admin if no entry is found
+
+
+def blockUser(request, user_id):
+    user = get_object_or_404(UserProfile, id=user_id)
+
+    # Check if the user is an admin
+    login_entry = LoginTable.objects.filter(user_profile=user).first()
+    
+    if login_entry and login_entry.type.lower() == "admin":
+        messages.error(request, "Admins cannot be blocked!")
+        return redirect(request.META.get('HTTP_REFERER', '/'))
+
+    # Block the user (non-admin)
+    user.isblocked = True
+    user.save()
+    messages.success(request, f"User {user.username} has been blocked.")
+    
+    return redirect(request.META.get('HTTP_REFERER', '/'))

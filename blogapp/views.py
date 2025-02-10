@@ -81,3 +81,15 @@ def deleteBlog(request, blog_id, user_id):
         return redirect('userblogs', user_id=user_id)
 
     return render(request, 'user/my_blogs.html', {'blog': blog, 'userprofile': userprofile})
+
+
+def publishBlog(request, blog_id, user_id):
+    userprofile = get_object_or_404(UserProfile, id=user_id)
+    blog = get_object_or_404(Blog, id=blog_id)
+
+    blog.is_published = True
+    blog.save()
+
+    return redirect(request.META.get('HTTP_REFERER', '/')) 
+
+    

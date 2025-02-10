@@ -13,8 +13,8 @@
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            Earnings (Monthly)</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
+                            Total Users</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{user_count}}</div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -31,8 +31,8 @@
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                            Earnings (Annual)</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
+                            Total Posts</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{blog_count}}</div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -48,11 +48,11 @@
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Approved Posts
                         </div>
                         <div class="row no-gutters align-items-center">
                             <div class="col-auto">
-                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
+                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{unpublished_percentage}}%</div>
                             </div>
                             <div class="col">
                                 <div class="progress progress-sm mr-2">
@@ -79,7 +79,7 @@
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
                             Pending Requests</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{pending_blog_count}}</div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-comments fa-2x text-gray-300"></i>
@@ -92,3 +92,47 @@
 
 {% endblock content-row %}
 
+{% block main-content %}
+
+
+{% if user.is_authenticated %}
+    <p>Welcome, {{ user.username }}! You are logged in.</p>
+{% else %}
+    <p>You are not logged in. <a href="{% url 'login' %}">Login here</a></p>
+{% endif %}
+<h3 class="text-dark">Quick Actions</h3><br>
+<table class="table table-bordered">
+    <tr>
+        <th>Sl.no</th>
+        <th>Username</th>
+        <th>Blog Title</th>
+        <th>Actions</th>
+    </tr>
+    {% for blog in blog_list %}
+    
+    <tr>
+        <td>{{forloop.counter}}</td>
+        <td>  <img class="img-profile rounded-circle" style="width: 40px;height: 40px;"
+            src="{{blog.user.profile_pic.url}}"> {{blog.user.username}}</td>
+        <td><a href="{% url "blogdetails" blog.id userprofile.id %}" class="text-info">{{blog.title}}</a></td>
+        <td>
+            <form action="" method="post">
+            <a href="{% url "publishblog" blog.id userprofile.id %}"class="btn btn-outline-success">Approve</a>
+            <a href="{% url "blockuser" blog.user.id %}"class="btn btn-outline-secondary"id='blockButton' onclick="return confirmblock()">block</a>
+            <a href="" class="btn btn-outline-danger">Reject</a>
+        </form>
+        </td>
+    </tr>
+    
+    {% endfor %}
+   
+</table>
+
+<script>
+    function confirmblock() {
+        return confirm("Are you sure you want to block this user?");
+    }
+</script>
+
+
+{% endblock main-content %}

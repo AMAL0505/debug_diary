@@ -8,6 +8,7 @@ class UserProfile(models.Model):
     profile_pic = models.ImageField(upload_to='profile_pics', blank=True)
     ph_no = models.CharField(max_length=10)
     password = models.CharField(max_length=20)
+    isblocked = models.BooleanField(default=False)
 
     def __str__(self):
         return self.username

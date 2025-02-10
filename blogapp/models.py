@@ -1,5 +1,7 @@
 from django.db import models
+from accounts.models import UserProfile
 from tinymce.models import HTMLField
+from django.utils.timezone import now
 
 # Create your models here.
 
@@ -19,7 +21,7 @@ class Blog(models.Model):
     image = models.ImageField(upload_to='blog_images/')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    user = models.ForeignKey('accounts.UserProfile',on_delete=models.CASCADE)
+    user = models.ForeignKey(UserProfile,on_delete=models.CASCADE)
     is_published = models.BooleanField(default=False)
     
     def __str__(self):
@@ -35,3 +37,14 @@ class Comment(models.Model):
     
     def __str__(self):
         return self.comment
+    
+
+
+class Notification(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)  # Target user
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)  # To track if the user has seen it
+    created_at = models.DateTimeField(default=now)
+
+    def __str__(self):
+        return f"Notification for {self.user.username}"
