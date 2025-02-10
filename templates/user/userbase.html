@@ -33,6 +33,7 @@
 
 		gtag('config', 'UA-119386393-1');
 	</script>
+	<script src="{% static 'tinymce/tinymce.min.js' %}"></script>
 </head>
 <body>
 	{% comment %} <div class="pre-loader">
@@ -48,7 +49,7 @@
 		</div>
 	</div> {% endcomment %}
 
-	<div class="header">
+	<div class="header bg-dark">
 		<div class="header-left">
 			<div class="menu-icon dw dw-menu"></div>
 			<div class="search-toggle-icon dw dw-search2" data-toggle="header_search"></div>
@@ -119,7 +120,7 @@
 						<span class="user-icon">
 							<img src="{{userprofile.profile_pic.url}}" alt="" style="width: 50px; height: 50px; border-radius: 50%;">
 						</span>
-						<span class="user-name">{{userprofile.username}}</span>
+						<span class="user-name text-light">{{userprofile.username}}</span>
 					</a>
 					<div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
 						<a class="dropdown-item" href="profile.html"><i class="dw dw-user1"></i> Profile</a>
@@ -133,7 +134,7 @@
 	</div>
 
 
-	<div class="left-side-bar">
+	<div class="left-side-bar bg-dark">
 		<div class="brand-logo">
 			<a href="{% url "userhomepage" userprofile.id %}">
 				<img src="{% static "assets/images/user/deskapp-logo.svg" %}" alt="" class="dark-logo">
@@ -152,7 +153,8 @@
 						</a>
 						<ul class="submenu">
 							<li><a href="{% url "userhomepage" userprofile.id %}">Home Page</a></li>
-							<li><a href="index2.html">Dashboard style 2</a></li>
+							<li><a href="{% url "createblog" userprofile.id %}">Create Blog</a></li>
+							<li><a href="{% url "userblogs" userprofile.id %}">My Blogs</a></li>
 						</ul>
 					</li>
 					<li class="dropdown">

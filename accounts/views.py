@@ -72,7 +72,7 @@ def userLogin(request):
                 if password==login_table.password:
                     # Successful login logic here (e.g., setting session data)
                     messages.success(request, "Login successful!")
-                    return redirect('adminhomepage')
+                    return redirect('adminhomepage',user_id=user_profile.id)
             if check_password(password, user_profile.password):
                 # Successful login logic here (e.g., setting session data)
                 messages.success(request, "Login successful!")
@@ -105,39 +105,13 @@ def logout_view(request):
 
 
 
-def userHomePage(request,user_id):
-    userprofile = UserProfile.objects.get(id=user_id)
-    return render(request, 'user/user_home.html',{'userprofile':userprofile})
 
-
-def adminHomePage(request):
-    return render(request, 'admin/admin_home.html')
-
-
-def blogDetailsPage(request,user_id):
-    userprofile = UserProfile.objects.get(id=user_id)
-    return render(request, 'user/blog_details.html',{'userprofile':userprofile})
 
 def userProfilePage(request,user_id):
     userprofile = UserProfile.objects.get(id=user_id)
     return render(request, 'user/user_profile.html',{'userprofile':userprofile})
 
 
-def updatUserProfile(request,user_id):
-    userprofile = UserProfile.objects.get(id=user_id)
-    logintable = LoginTable.objects.get(user_profile=userprofile)
-    if request.method == 'POST':
-        userprofile.username = request.POST['username']
-        userprofile.first_name = request.POST['first_name']
-        logintable.first_name = request.POST['first_name']
-        userprofile.last_name = request.POST['last_name']
-        logintable.last_name = request.POST['last_name']
-        userprofile.email = request.POST['email']  
-        userprofile.ph_no = request.POST['ph_no']
-        userprofile.save()
-        logintable.save()
-        return redirect('userprofile',user_id=user_id)
-    return render(request, 'user/user_profile.html',{'userprofile':userprofile})
 
 def deleteUserProfile(request,user_id):
     userprofile = UserProfile.objects.get(id=user_id)

@@ -1,0 +1,35 @@
+{% extends "user/userbase.html" %}
+{% load static %}
+{% block content %}
+
+<script>
+    tinymce.init({
+        selector: 'textarea',  // Targets all textareas
+        height: 300,
+        menubar: true,  // Enables the top menu bar
+        plugins: [
+            'advlist autolink lists link image charmap print preview anchor',
+            'searchreplace visualblocks code fullscreen',
+            'insertdatetime media table paste code help wordcount'
+        ],
+        toolbar: 'undo redo | formatselect | ' +
+                 'bold italic underline strikethrough | forecolor backcolor | ' +
+                 'alignleft aligncenter alignright alignjustify | ' +
+                 'bullist numlist outdent indent | ' +
+                 'removeformat | help',
+        branding: false,  // Removes "Powered by TinyMCE"
+        content_css: 'https://cdnjs.cloudflare.com/ajax/libs/tiny-mce/5.10.0/skins/ui/oxide/content.css'
+    });
+</script>
+    <div class="mb-5">
+        <h3>Create Your Blog</h3>
+        <!-- blog_form.html -->
+        <form class method="post" action="{% url "createblog" userprofile.id %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form><br><br>
+    </div>
+
+{% endblock content %}
+

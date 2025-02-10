@@ -10,36 +10,45 @@
                     <div class="col-md-8 col-sm-12">
                         <div class="blog-list">
                             <ul>
+                                {% for blog in blog_list %}
                                 <li>
                                     <div class="row no-gutters">
                                         <div class="col-lg-4 col-md-12 col-sm-12">
                                             <div class="blog-img">
-                                                <img src="{{userprofile.profile_pic.url}}" alt="" class="bg_img">
+                                                <img src="{{blog.image.url}}" alt="" class="bg_img">
                                             </div>
                                         </div>
+                                       
                                         <div class="col-lg-8 col-md-12 col-sm-12">
-                                            <div class="blog-caption">
-                                                <div class='row'>
-                                                    <span class="user-icon">
-                                                        <img src="{{userprofile.profile_pic.url}}" alt="" style="width: 40px; height: 40px; border-radius: 50%;">
-                                                        <div class='row'>
-                                                        <small>{{userprofile.username}}</small>
-                                                        <small>Date</small></div>
-                                                    </span><br>
-                                                   
-                                                </div>
-                                                <h4><a href="#">Lorem ipsum dolor sit amet, consectetur adipisicing elit</a></h4>
-                                                <div class="blog-by">
+                                            
+
+                                                <div class="blog-caption">
+                                                    <div class='row'>
+                                                        <span class="user-icon">
+                                                            <img src="{{blog.user.profile_pic.url}}" alt="" style="width: 40px; height: 40px; border-radius: 50%;">
+                                                            <div class='row'>
+                                                            <small>{{blog.user.username}}</small>
+                                                            <small>Date {{ blog.created_at|date:"F j, Y" }}</small></div>
+                                                        </span><br>
                                                     
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo</p>
-                                                    <div class="pt-10">
-                                                        <a href="{% url "blogdetails" userprofile.id %}" class="btn btn-outline-primary">Read More</a>
+                                                    </div>
+                                                    <h4><a href="#">{{blog.title}}</a></h4>
+                                                    <div class="blog-by">
+                                                        
+                                                        <p>{{ blog.description|safe|truncatewords:10 }}</p>
+                                                        <div class="pt-10">
+                                                            <a href="{% url "blogdetails" blog.id userprofile.id %}" class="btn btn-outline-primary">Read More</a>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
+
+                                           
+                                            
                                         </div>
+                                       
                                     </div>
                                 </li>
+                                {% endfor %}
                                 
                                
                                
@@ -63,11 +72,11 @@
                         <div class="card-box mb-30">
                             <h5 class="pd-20 h5 mb-0">Categories</h5>
                             <div class="list-group">
-                                <a href="#" class="list-group-item d-flex align-items-center justify-content-between">HTML <span class="badge badge-primary badge-pill">7</span></a>
-                                <a href="#" class="list-group-item d-flex align-items-center justify-content-between">Css <span class="badge badge-primary badge-pill">10</span></a>
-                                <a href="#" class="list-group-item d-flex align-items-center justify-content-between active">Bootstrap <span class="badge badge-primary badge-pill">8</span></a>
-                                <a href="#" class="list-group-item d-flex align-items-center justify-content-between">jQuery <span class="badge badge-primary badge-pill">15</span></a>
-                                <a href="#" class="list-group-item d-flex align-items-center justify-content-between">Design <span class="badge badge-primary badge-pill">5</span></a>
+                                {% for category in categories %}
+                                <a href="{% url 'filterblogs' category.id userprofile.id %}" class="list-group-item d-flex align-items-center justify-content-between">
+                                    {{ category.name }} <span class="badge badge-primary badge-pill">{{ category.blogs.count }}</span>
+                                </a>
+                                {% endfor %}
                             </div>
                         </div>
                         <div class="card-box mb-30">
