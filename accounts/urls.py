@@ -9,6 +9,9 @@ urlpatterns = [
     path('deleteprofile/<int:user_id>/',views.deleteUserProfile,name='deleteprofile'),
     path('blockuser/<int:user_id>/',views.blockUser,name='blockuser'),
     path('logout/',views.logout_view,name='logout'),
+    path('blockedusers/<int:user_id>',views.blockedUsers,name='blockedusers'),
+    path('unblockuser/<int:user_id>/',views.unblockUser,name='unblockuser'),
+    path('availableusers/<int:user_id>/',views.availableUsers,name='availableusers'),
     
 ]
 

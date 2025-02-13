@@ -61,37 +61,54 @@ def userRegistration(request):
 
 def userLogin(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST.get('username')
+        password = request.POST.get('password')
 
         try:
             # Get the user profile
             user_profile = UserProfile.objects.get(username=username)
 
-            # Check if the password is correct
-            if LoginTable.objects.filter(user_profile=user_profile).exists():
-                login_table = LoginTable.objects.get(user_profile=user_profile)
-                if password==login_table.password:
-                    # Successful login logic here (e.g., setting session data)
-                    messages.success(request, "Login successful!")
-                    return redirect('adminhomepage',user_id=user_profile.id)
-            if check_password(password, user_profile.password):
-                if user_profile.is_blocked:
-                    messages.error(request, "Your account is blocked.")
-                    return redirect('login') # Redirect to a home page or error page
-                # Successful login logic here (e.g., setting session data)
-                messages.success(request, "Login successful!")
-                
-                return redirect('userhomepage',user_id=user_profile.id)
-                  # Redirect to a home page or dashboard
-            else:
-                messages.error(request, "Invalid username or password.")
+            # Debugging: Print user profile ID
+            print(f"User Profile ID: {user_profile.id}")
+
+            # Check if user is blocked
+            if user_profile.isblocked:
+                messages.error(request, "Your account is blocked.")
                 return redirect('login')
+
+            # Check login credentials in LoginTable
+            login_table = LoginTable.objects.filter(user_profile=user_profile).first()
+            if login_table and password == login_table.password:
+                request.session['user_id'] = user_profile.id  # ✅ Store user_id in session
+                
+                # Debugging: Print session data
+                print(f"Session Data: {request.session.get('user_id')}")
+
+                messages.success(request, "Login successful!")
+                return redirect('adminhomepage', user_id=user_profile.id)
+
+            # Check password directly from UserProfile (if applicable)
+            if check_password(password, user_profile.password): 
+                request.session['user_id'] = user_profile.id  # ✅ Store user_id in session
+                
+                # Debugging: Print session data
+                print(f"Session Data: {request.session.get('user_id')}")
+
+                messages.success(request, "Login successful!")
+                return redirect('userhomepage', user_id=user_profile.id)
+
+            messages.error(request, "Invalid username or password.")
+            return redirect('login')
+
         except UserProfile.DoesNotExist:
             messages.error(request, "Invalid username or password.")
             return redirect('login')
 
     return render(request, 'accounts/authentication.html')
+
+
+
+
 
 
 def userProfile(request, username):
@@ -168,3 +185,32 @@ def blockUser(request, user_id):
     messages.success(request, f"User {user.username} has been blocked.")
     
     return redirect(request.META.get('HTTP_REFERER', '/'))
+
+
+def blockedUsers(request,user_id):
+    userprofile = UserProfile.objects.get(id=user_id)
+    blocked_users = UserProfile.objects.filter(isblocked=True)
+    context = {
+        'userprofile':userprofile,
+        'blocked_users':blocked_users}
+    return render(request, 'admin/admin_blocked_users.html', context)
+
+
+def unblockUser(request, user_id):
+    user = get_object_or_404(UserProfile, id=user_id)
+    user.isblocked = False
+    user.save()
+    messages.success(request, f"User {user.username} has been unblocked.")
+    
+    return redirect(request.META.get('HTTP_REFERER', '/'))
+
+
+def availableUsers(request,user_id):
+    userprofile = UserProfile.objects.get(id=user_id)
+    available_users = LoginTable.objects.filter(type='user',user_profile__isblocked=False)
+    context = {
+        'userprofile':userprofile,
+        'available_users':available_users
+    }
+
+    return render(request, 'admin/admin_user_list.html', context)

@@ -10,6 +10,7 @@
 	<link rel="icon" type="image/png" sizes="32x32" href="{% static "assets/images/user/favicon-32x32.png" %}">
 	<link rel="icon" type="image/png" sizes="16x16" href="{% static "assets/images/user/favicon-16x16.png" %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+	
     
 
 
@@ -48,6 +49,14 @@
 			</div>
 		</div>
 	</div> {% endcomment %}
+
+
+	{% if user.is_authenticated %}
+    <p>Welcome, {{ userprofile.username }}!</p>
+{% else %}
+    <p>Welcome, Guest!</p>
+{% endif %}
+
 
 	<div class="header bg-dark">
 		<div class="header-left">
@@ -100,15 +109,25 @@
 					</a>
 					<div class="dropdown-menu dropdown-menu-right">
 						<div class="notification-list mx-h-350">
-							<ul>
-								<li>
-									<a href="#">
-										<img src="vendors/images/img.jpg" alt="">
-										<h3>John Doe</h3>
-										<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed...</p>
-									</a>
+							<ul class="list-unstyled">
+								{% for notification in notifications %}
+								<li class="notification-item mb-3">
+									<div class="d-flex align-items-center justify-content-between">
+										<div class="d-flex align-items-center">
+											<a href="#">
+												<img src="{{ notification.from_user.profile_pic.url }}" alt="{{ notification.from_user.username }}" class="rounded-circle" style="width: 50px; height: 50px;">
+											</a>
+											<div class="ms-3"> <!-- Add margin start for spacing -->
+												<h5 class="mb-0">{{ notification.from_user.username }}</h5>
+												<p class="mb-0 text-muted">{{ notification.message }}</p>
+											</div>
+										</div>
+										<div>
+											<a href="#" class="btn btn-secondary btn-sm">Remove</a>
+										</div>
+									</div>
 								</li>
-								
+								{% endfor %}
 							</ul>
 						</div>
 					</div>
@@ -159,7 +178,7 @@
 					</li>
 					<li class="dropdown">
 						<a href="javascript:;" class="dropdown-toggle">
-							<span class="micon dw dw-house-1"></span><span class="mtext">Profile</span>
+							<span class="micon dw dw-user1"></span><span class="mtext">Profile</span>
 						</a>
 						<ul class="submenu">
 							<li><a href="{% url "userprofile" userprofile.id %}">View Profile</a></li>

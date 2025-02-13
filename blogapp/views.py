@@ -1,5 +1,5 @@
 from django.shortcuts import render,get_object_or_404,redirect
-from .models import Blog, Category
+from .models import Blog, Category, Notification
 from accounts.models import UserProfile
 from .forms import BlogForm
 
@@ -92,4 +92,35 @@ def publishBlog(request, blog_id, user_id):
 
     return redirect(request.META.get('HTTP_REFERER', '/')) 
 
+
+def pendingBlogs(request, user_id):
+    userprofile = get_object_or_404(UserProfile, id=user_id)
+    blogs = Blog.objects.filter(is_published=False)
+    context = {
+        'blogs': blogs,
+        'userprofile': userprofile
+    }
+    return render(request, 'admin/admin_view_requests.html',context)
     
+
+
+def blockedBlogs(request, user_id):
+    userprofile = get_object_or_404(UserProfile, id=user_id)
+    blogs = Blog.objects.filter(is_blocked=True)
+    context = {
+        'blogs': blogs,
+        'userprofile': userprofile
+    }
+    return render(request, 'admin/admin_blocked_blogs.html',context)
+
+
+def createNotification(request, from_user_id, to_user_id):
+    from_user = get_object_or_404(UserProfile, id=from_user_id)
+    to_user = get_object_or_404(UserProfile, id=to_user_id)
+
+    if request.method == 'POST':
+        message = request.POST.get('message')
+        notification = Notification(from_user=from_user, to_user=to_user, message=message)
+        notification.save()
+
+    return redirect(request.META.get('HTTP_REFERER', '/'))  # Redirect to previous page

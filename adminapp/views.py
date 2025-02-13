@@ -39,3 +39,13 @@ def adminProfile(request,user_id):
         'userprofile':userprofile
     }
     return render(request, 'admin/admin_profile.html',context)
+
+
+def adminBlogDetails(request,blog_id,user_id):
+    userprofile = UserProfile.objects.get(id=user_id)
+    blog = Blog.objects.get(id=blog_id)
+    context = {
+        'userprofile':userprofile,
+        'blog':blog
+    }
+    return render(request, 'admin/admin_blog_details.html',context)

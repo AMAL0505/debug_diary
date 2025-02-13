@@ -1,0 +1,46 @@
+{% extends "admin/adminbase.html" %}
+
+{% load static %}
+
+{% block main-content %}
+
+<div class="min-height-200px">
+    <div class="blog-wrap">
+        <div class="container pd-0">
+            <div class="row">
+                <div class="col-md-10 col-sm-12">
+                    <div class="blog-detail card-box overflow-hidden mb-30">
+                        <div class="blog-img">
+                            <img src="{{blog.image.url}}" alt="">
+                        </div><br>
+                        <div class="blog-caption">
+                            <h3 class="mb-10 text-dark">{{blog.title}}</h3>
+                            <p>{{blog.description | safe}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br><br>
+    <div align="right"class="col-md-10 col-sm-12">
+        <a href="" class="btn btn-outline-success"onclick="confirmblogapprove">Approve Blog</a>
+        <a href="{% url "blockuser" blog.user.id %}" class="btn btn-outline-secondary" onclick="confirmblogblockuser()">Block</a>
+        <a href="" class="btn btn-outline-danger" onclick="confirmblogblock()">Delete Blog</a>
+    </div>
+</div>
+
+<script>
+    function confirmblogblock() {
+        return confirm("Are you sure you want to Delete this blog?");
+    }
+    function confirmblogapprove() {
+        return confirm("Are you sure you want to Approve this blog?");
+    }
+    function confirmblogblockuser() {
+        return confirm("Are you sure you want to Block this user?");
+    }
+</script>
+
+{% endblock main-content %}
+

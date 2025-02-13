@@ -10,4 +10,6 @@ urlpatterns = [
     path('updateblog/<int:blog_id>/user/<int:user_id>/',views.updateBlog,name='updateblog'),
     path('deleteblog/<int:blog_id>/user/<int:user_id>/',views.deleteBlog,name='deleteblog'),
     path('publishblog/<int:blog_id>/user/<int:user_id>/',views.publishBlog,name='publishblog'),
+    path('pendingblogs/<int:user_id>/',views.pendingBlogs,name='pendingblogs'),
+    path('blockedblogs/<int:user_id>/',views.blockedBlogs,name='blockedblogs'),
 ]

@@ -1,19 +1,18 @@
 from django.shortcuts import render,redirect
 from accounts.models import LoginTable, UserProfile 
 from blogapp.models import Blog, Category
+from django.contrib.auth.hashers import make_password
 
 # Create your views here.
 
 def userHomePage(request,user_id):
-    userprofile = UserProfile.objects.get(id=user_id)
     blog_list = Blog.objects.all()
     categories = Category.objects.all()
-    context = {'userprofile':userprofile,'blog_list':blog_list,'categories':categories}
+    context = {'blog_list':blog_list,'categories':categories}
     return render(request, 'user/user_home.html',context)
 
 def userProfilePage(request,user_id):
-    userprofile = UserProfile.objects.get(id=user_id)
-    return render(request, 'user/user_profile.html',{'userprofile':userprofile})
+    return render(request, 'user/user_profile.html')
 
 
 def updatUserProfile(request,user_id):

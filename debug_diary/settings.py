@@ -55,6 +55,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # ✅ Store sessions in database
+SESSION_COOKIE_AGE = 86400  # (1 day)
+SESSION_SAVE_EVERY_REQUEST = True  # ✅ Save session every request
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
+
 ROOT_URLCONF = 'debug_diary.urls'
 
 TEMPLATES = [
@@ -68,6 +74,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'accounts.context_processors.user_profile',
             ],
         },
     },
