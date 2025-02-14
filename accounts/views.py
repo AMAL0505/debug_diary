@@ -140,7 +140,28 @@ def deleteUserProfile(request,user_id):
     userprofile.delete()
     return redirect('login')
 
+
+
+def updatUserProfile(request,user_id):
+    print("function called")
+    userprofile = UserProfile.objects.get(id=user_id)
+    logintable = LoginTable.objects.get(user_profile=userprofile)
+    if request.method == 'POST':
+        userprofile.username = request.POST['username']
+        userprofile.first_name = request.POST['first_name']
+        logintable.first_name = request.POST['first_name']
+        userprofile.last_name = request.POST['last_name']
+        logintable.last_name = request.POST['last_name']
+        userprofile.email = request.POST['email']  
+        userprofile.ph_no = request.POST['ph_no']
+        userprofile.profile_pic = request.FILES['profile_pic']
+        userprofile.save()
+        logintable.save()
+        return redirect('userprofile',user_id=user_id)
+    return render(request, 'user/user_profile.html',{'userprofile':userprofile})
+
 def updateProfilePic(request,user_id):
+    print("function called")
     userprofile = UserProfile.objects.get(id=user_id)
     if request.method == 'POST':
         userprofile.profile_pic = request.FILES.get('profile_pic')

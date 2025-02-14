@@ -10,21 +10,50 @@
                 <div class="profile-photo">
                     <a href="modal" data-toggle="modal" data-target="#modal" class="edit-avatar"><i class="fa fa-pencil"></i></a>
                     <img src="{{userprofile.profile_pic.url}}" alt="" class="avatar-photo" style="width: 160px; height: 160px;">
-                    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content">
-                                <div class="modal-body pd-5">
-                                    <div class="img-container">
-                                        <img id="image" src="{{userprofile.profile_pic.url}}" alt="Picture">
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <input type="submit" value="Update" class="btn btn-primary">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- First Modal: Display Current Profile Picture -->
+<!-- First Modal: Display Current Profile Picture -->
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body pd-5">
+                <div class="img-container">
+                    {% if userprofile.profile_pic %}
+                        <img id="image" src="{{ userprofile.profile_pic.url }}" alt="Picture">
+                    {% else %}
+                        <img id="image" src="{% static 'path/to/default/image.png' %}" alt="Default Picture">
+                    {% endif %}
+                </div>
+            </div>
+            {% comment %} <form id="updateProfilePicForm" action="{% url 'updateprofilepic' userprofile.id %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#chooseImageModal">Update</button>
+                    <button type="submit" class="btn btn-outline-primary">Confirm</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </form> {% endcomment %}
+        </div>
+    </div>
+</div>
+
+<!-- Second Modal: Choose New Profile Picture -->
+<div class="modal fade" id="chooseImageModal" tabindex="-1" role="dialog" aria-labelledby="chooseImageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body pd-5">
+                <h5>Choose a new profile picture</h5>
+                <input type="file" id="newProfilePic" accept="image/*">
+                <div class="img-preview mt-3" style="display: none;">
+                    <img id="newImagePreview" src="" alt="New Picture" style="max-width: 100%;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="confirmUpdate">Choose</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
                 </div>
                 <h5 class="text-center h5 mb-0">{{userprofile.username}}</h5>
                 <p class="text-center text-muted font-14">{{userprofile.first_name}} {{userprofile.last_name}}</p>
@@ -39,15 +68,7 @@
                             <span>Phone Number:</span>
                             {{userprofile.ph_no}}
                         </li>
-                        <li>
-                            <span>Country:</span>
-                            America
-                        </li>
-                        <li>
-                            <span>Address:</span>
-                            1807 Holden Street<br>
-                            San Diego, CA 92115
-                        </li>
+                        
                     </ul>
                 </div>
                 <div class="profile-social">
@@ -73,9 +94,6 @@
                 <div class="profile-tab height-100-p">
                     <div class="tab height-100-p">
                         <ul class="nav nav-tabs customtab" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" data-toggle="tab" href="#timeline" role="tab">Timeline</a>
-                            </li>
                            
                             <li class="nav-item">
                                 <a class="nav-link" data-toggle="tab" href="#setting" role="tab">Settings</a>
@@ -83,44 +101,7 @@
                         </ul>
                         <div class="tab-content">
                             <!-- Timeline Tab start -->
-                            <div class="tab-pane fade show active" id="timeline" role="tabpanel">
-                                <div class="pd-20">
-                                    <div class="profile-timeline">
-                                        <div class="timeline-month">
-                                            <h5>August, 2020</h5>
-                                        </div>
-                                        <div class="profile-timeline-list">
-                                            <ul>
-                                                <li>
-                                                    <div class="date">12 Aug</div>
-                                                    <div class="task-name"><i class="ion-android-alarm-clock"></i> Task Added</div>
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-                                                    <div class="task-time">09:30 am</div>
-                                                </li>
-                                                <li>
-                                                    <div class="date">10 Aug</div>
-                                                    <div class="task-name"><i class="ion-ios-chatboxes"></i> Task Added</div>
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-                                                    <div class="task-time">09:30 am</div>
-                                                </li>
-                                                <li>
-                                                    <div class="date">10 Aug</div>
-                                                    <div class="task-name"><i class="ion-ios-clock"></i> Event Added</div>
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-                                                    <div class="task-time">09:30 am</div>
-                                                </li>
-                                                <li>
-                                                    <div class="date">10 Aug</div>
-                                                    <div class="task-name"><i class="ion-ios-clock"></i> Event Added</div>
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-                                                    <div class="task-time">09:30 am</div>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        
-                                    </div>
-                                </div>
-                            </div>
+                            
                             <!-- Timeline Tab End -->
                             <!-- Tasks Tab start -->
                            
@@ -128,7 +109,7 @@
                             <!-- Setting Tab start -->
                             <div class="tab-pane fade height-100-p" id="setting" role="tabpanel">
                                 <div class="profile-setting">
-                                    <form action="{% url "updateprofile" userprofile.id %}"method="post">
+                                    <form action="{% url "updateprofile" userprofile.id %}"method="post" enctype="multipart/form-data">
                                         {% csrf_token %}
                                         <ul class="profile-edit-list row">
                                             <li class="weight-500 col-md-8">
@@ -156,10 +137,8 @@
                                                     <input class="form-control form-control-lg" type="text" name="ph_no" value="{{userprofile.ph_no}}">
                                                 </div>
                                                 <div class="form-group">
-                                                    <div class="custom-control custom-checkbox mb-5">
-                                                        <input type="checkbox" class="custom-control-input" id="customCheck1-1">
-                                                        <label class="custom-control-label weight-400" for="customCheck1-1">I agree to receive notification emails</label>
-                                                    </div>
+                                                    <label for="">Profile Picture</label>
+                                                    <input class="form-control form-control-lg" type="file" name="profile_pic" value="">
                                                 </div>
                                                 <div class="form-group mb-0">
                                                     <input type="submit" class="btn btn-primary" value="Update Information">
@@ -178,6 +157,27 @@
         </div>
     </div>
 </div>
+
+
+<script>
+    document.getElementById('newProfilePic').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('newImagePreview').src = e.target.result;
+                document.querySelector('.img-preview').style.display = 'block';
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    document.getElementById('confirmUpdate').addEventListener('click', function() {
+        const newImageSrc = document.getElementById('newImagePreview').src;
+        document.getElementById('image').src = newImageSrc; // Update the image in the first modal
+        $('#chooseImageModal').modal('hide'); // Hide the choose image modal
+    });
+</script>
 
 
 {% endblock content%}

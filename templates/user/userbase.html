@@ -105,32 +105,39 @@
 				<div class="dropdown">
 					<a class="dropdown-toggle no-arrow" href="#" role="button" data-toggle="dropdown">
 						<i class="icon-copy dw dw-notification"></i>
-						<span class="badge notification-active"></span>
+						{% if notifications|length > 0 %}
+							<span class="badge notification-active"></span>
+						{% endif %}
 					</a>
-					<div class="dropdown-menu dropdown-menu-right">
-						<div class="notification-list mx-h-350">
-							<ul class="list-unstyled">
-								{% for notification in notifications %}
-								<li class="notification-item mb-3">
-									<div class="d-flex align-items-center justify-content-between">
-										<div class="d-flex align-items-center">
-											<a href="#">
-												<img src="{{ notification.from_user.profile_pic.url }}" alt="{{ notification.from_user.username }}" class="rounded-circle" style="width: 50px; height: 50px;">
-											</a>
-											<div class="ms-3"> <!-- Add margin start for spacing -->
-												<h5 class="mb-0">{{ notification.from_user.username }}</h5>
-												<p class="mb-0 text-muted">{{ notification.message }}</p>
+					{% if notifications %}
+						<div class="dropdown-menu dropdown-menu-right">
+							<div class="notification-list mx-h-350">
+								<ul class="list-unstyled">
+									{% for notification in notifications %}
+									<li class="notification-item mb-3">
+										<div class="d-flex align-items-left justify-content-between">
+											<div class="d-flex align-items-center">
+												<a href="#">
+													<img src="{{notification.from_user.profile_pic.url}}" alt="sender" class="rounded-circle" style="width: 50px; height: 50px;">
+												</a>
+												<div class="ms-3"> <!-- Add margin start for spacing -->
+													<h5 class="mb-0">{{notification.from_user.username}}</h5>
+													<p class="mb-0 text-muted">{{notification.message}}</p>
+												</div>
 											</div>
 										</div>
-										<div>
-											<a href="#" class="btn btn-secondary btn-sm">Remove</a>
-										</div>
-									</div>
-								</li>
-								{% endfor %}
-							</ul>
+									</li>
+									{% endfor %}
+								</ul>
+							</div>
 						</div>
-					</div>
+					{% else %}
+						<div class="dropdown-menu dropdown-menu-right">
+							<div class="notification-list">
+								<p class="text-muted text-center">No notifications available.</p>
+							</div>
+						</div>
+					{% endif %}
 				</div>
 			</div>
 			<div class="user-info-dropdown">
@@ -141,12 +148,7 @@
 						</span>
 						<span class="user-name text-light">{{userprofile.username}}</span>
 					</a>
-					<div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-						<a class="dropdown-item" href="profile.html"><i class="dw dw-user1"></i> Profile</a>
-						<a class="dropdown-item" href="profile.html"><i class="dw dw-settings2"></i> Setting</a>
-						<a class="dropdown-item" href="faq.html"><i class="dw dw-help"></i> Help</a>
-						<a class="dropdown-item" href="{% url "logout" %}"><i class="dw dw-logout"></i> Log Out</a>
-					</div>
+					
 				</div>
 			</div>
 		</div>
@@ -182,7 +184,6 @@
 						</a>
 						<ul class="submenu">
 							<li><a href="{% url "userprofile" userprofile.id %}">View Profile</a></li>
-							<li><a href="index2.html">Update Profile</a></li>
 						</ul>
 					</li>
 				</ul>
@@ -190,7 +191,11 @@
 		</div>
 	</div>
     <div class="main-container">
-		<div class="pd-ltr-20">
+
+		<h3>{% block title %}
+			{% endblock title %}</h3>
+
+		<div class="">
             {% block content %}
             {% endblock content %}
 		</div>

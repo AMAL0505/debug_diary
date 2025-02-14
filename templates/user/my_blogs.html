@@ -1,70 +1,74 @@
 {% extends "user/userbase.html" %}
 {% load static %}
 
+
+{% block title %}
+<ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="#">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page"><a href="#">My Blogs</a></li>
+  </ol>
+{% endblock title %}
+
 {% block content %}
 
-<div class="col-md-8 col-sm-12">
-    <div class="blog-list">
-        <ul>
-            {% for blog in blogs %}
-            <li>
-                <div class="row no-gutters">
-                    <div class="col-lg-4 col-md-12 col-sm-12">
-                        <div class="blog-img">
-                            <img src="{{blog.image.url}}" alt="" class="bg_img">
+<div class="min-height-200px">
+    <div class="blog-wrap">
+        <div class="container pd-0">
+            <div class="row">
+                <div class="col-md-8 col-sm-12">
+                    <div class="blog-list">
+                        <ul>
+                            {% for blog in blogs %}
+                            <li>
+                                <div class="row no-gutters">
+                                    <div class="col-lg-4 col-md-12 col-sm-12">
+                                        <div class="blog-img">
+                                            <img src="{{blog.image.url}}" alt="" class="bg_img">
+                                        </div>
+                                    </div>
+                                   
+                                    <div class="col-lg-8 col-md-12 col-sm-12">
+                                        <div class="blog-caption">
+                                            <h3><a href="#">{{blog.title}}</a></h3>
+                                            <div class="blog-by">
+                                                
+                                                <p>{{ blog.description|safe|truncatewords:20 }}</p>
+                                                <div class="" style="margin:auto;">
+                                                    <a href="{% url "blogdetails" blog.id userprofile.id %}" class="btn btn-outline-primary">Read More</a>
+                                                    <a href="{% url "updateblog" blog.id userprofile.id %}" class="btn btn-outline-warning">Edit</a>
+                                                    <a href="{% url "deleteblog" blog.id userprofile.id %}" class="btn btn-outline-danger">Delete</a>
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+            
+                                   
+                                    
+                                </div>
+                                   
+                                </div>
+                            </li>
+                            {% endfor %}
+                            
+                           
+                           
+                        </ul>
+                    </div>
+                    <div class="blog-pagination">
+                        <div class="btn-toolbar justify-content-center mb-15">
+                            <div class="btn-group">
+                                <a href="#" class="btn btn-outline-primary prev"><i class="fa fa-angle-double-left"></i></a>
+                                <a href="#" class="btn btn-outline-primary">1</a>
+                                <a href="#" class="btn btn-outline-primary">2</a>
+                                <span class="btn btn-primary current">3</span>
+                                <a href="#" class="btn btn-outline-primary">4</a>
+                                <a href="#" class="btn btn-outline-primary">5</a>
+                                <a href="#" class="btn btn-outline-primary next"><i class="fa fa-angle-double-right"></i></a>
+                            </div>
                         </div>
                     </div>
-                   
-                    <div class="col-lg-8 col-md-12 col-sm-12">
-                        
-
-                            <div class="blog-caption">
-                                <div class='row'>
-                                    <span class="user-icon">
-                                        <img src="{{blog.user.profile_pic.url}}" alt="" style="width: 40px; height: 40px; border-radius: 50%;">
-                                        <div class='row'>
-                                        <small>{{blog.user.username}}</small>
-                                        <small>Date {{ blog.created_at|date:"F j, Y" }}</small></div>
-                                    </span><br>
-                                
-                                </div>
-                                <h4><a href="#">{{blog.title}}</a></h4>
-                                <div class="blog-by">
-                                    
-                                    <p>{{ blog.description|safe|truncatewords:10 }}</p>
-                                    <div class="pt-10">
-                                        <a href="{% url "blogdetails" blog.id userprofile.id %}" class="btn btn-outline-primary">Read More</a>
-                                        <a href="{% url "updateblog" blog.id userprofile.id %}" class="btn btn-outline-warning">Update</a>
-                                        <form action="{% url 'deleteblog' blog.id userprofile.id %}" method="post" style="display:inline;">
-                                            {% csrf_token %}
-                                            <button type="submit" class="btn btn-outline-danger" onclick="return confirmDelete();">Delete</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-
-                       
-                        
-                    </div>
-                   
                 </div>
-            </li>
-            {% endfor %}
-            
-           
-           
-        </ul>
-    </div>
-    <div class="blog-pagination">
-        <div class="btn-toolbar justify-content-center mb-15">
-            <div class="btn-group">
-                <a href="#" class="btn btn-outline-primary prev"><i class="fa fa-angle-double-left"></i></a>
-                <a href="#" class="btn btn-outline-primary">1</a>
-                <a href="#" class="btn btn-outline-primary">2</a>
-                <span class="btn btn-primary current">3</span>
-                <a href="#" class="btn btn-outline-primary">4</a>
-                <a href="#" class="btn btn-outline-primary">5</a>
-                <a href="#" class="btn btn-outline-primary next"><i class="fa fa-angle-double-right"></i></a>
+                
             </div>
         </div>
     </div>

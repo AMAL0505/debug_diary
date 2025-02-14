@@ -25,8 +25,8 @@ Requests
             <td><a href="{% url "adminblogdetails" blog.id userprofile.id %}" class="text-info">{{blog.title}}</a></td>
             <td>
                 <form action="" method="post">
-                    <a href="" class="btn btn-outline-success"onclick="confirmblogapprove">Approve Blog</a>
-                    <a href="" class="btn btn-outline-danger" onclick="confirmblogblock()">Delete Blog</a>
+                    <a href="" class="btn btn-outline-success"onclick="confirmblogapprove()">Approve Blog</a>
+                    <a href="{% url "blockblog" blog.id %}" class="btn btn-outline-danger" onclick="confirmblogblock()">Delete Blog</a>
             </form>
             </td>
         </tr>

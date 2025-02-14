@@ -3,113 +3,51 @@
 
     {% block content %}
     <h1>Welcome Back,  {{userprofile.username}}</h1><br>
-    <div class="min-height-200px">
+    <div class="col-md-12 col-sm-12">
         <div class="blog-wrap">
-            <div class="container pd-0">
-                <div class="row">
-                    <div class="col-md-8 col-sm-12">
-                        <div class="blog-list">
-                            <ul>
-                                {% for blog in blog_list %}
-                                <li>
-                                    <div class="row no-gutters">
-                                        <div class="col-lg-4 col-md-12 col-sm-12">
-                                            <div class="blog-img">
-                                                <img src="{{blog.image.url}}" alt="" class="bg_img">
-                                            </div>
-                                        </div>
-                                       
-                                        <div class="col-lg-8 col-md-12 col-sm-12">
-                                            
-
-                                                <div class="blog-caption">
-                                                    <div class='row'>
-                                                        <span class="user-icon">
-                                                            <img src="{{blog.user.profile_pic.url}}" alt="" style="width: 40px; height: 40px; border-radius: 50%;">
-                                                            <div class='row'>
-                                                            <small>{{blog.user.username}}</small>
-                                                            <small>Date {{ blog.created_at|date:"F j, Y" }}</small></div>
-                                                        </span><br>
-                                                    
-                                                    </div>
-                                                    <h4><a href="#">{{blog.title}}</a></h4>
-                                                    <div class="blog-by">
-                                                        
-                                                        <p>{{ blog.description|safe|truncatewords:10 }}</p>
-                                                        <div class="pt-10">
-                                                            <a href="{% url "blogdetails" blog.id userprofile.id %}" class="btn btn-outline-primary">Read More</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                           
-                                            
-                                        </div>
-                                       
-                                    </div>
-                                </li>
+            <ul>
+                <li>
+                    <div class="container" style="display: flex; flex-wrap: wrap; justify-content: center; max-width: 1200px; margin-block: 2rem; gap: 2rem;">
+                        {% for blog in blog_list %}
+                        <div class="card" style="display: flex; flex-direction: column; width: clamp(20rem, calc(20rem + 2vw), 22rem); overflow: hidden; box-shadow: 0 .1rem 1rem rgba(0, 0, 0, 0.1); border-radius: 1em; background: linear-gradient(to right, #FFFFFF, #ECE9E6);">
+                            <div class="card__header">
+                                <img src="{{blog.image.url}}" alt="card__image" class="card__image" width="600" style="max-width: 100%; display: block; object-fit: cover;">
+                            </div>
+                            <div class="card__body" style="padding: 1rem; display: inline; flex-direction: column; gap: .5rem;">
+                                <div style="padding: 4px 2px 5px 2px;">
+                                {% for category in blog.categories.all %}
+                                <span class="tag tag-blue" style="align-self: flex-start; padding: .25em .75em; border-radius: 1em; font-size: .75rem; background: linear-gradient(to bottom, #2F80ED, #56CCF2); color: #fafafa;">{{category.name}}</span>
                                 {% endfor %}
-                                
-                               
-                               
-                            </ul>
-                        </div>
-                        <div class="blog-pagination">
-                            <div class="btn-toolbar justify-content-center mb-15">
-                                <div class="btn-group">
-                                    <a href="#" class="btn btn-outline-primary prev"><i class="fa fa-angle-double-left"></i></a>
-                                    <a href="#" class="btn btn-outline-primary">1</a>
-                                    <a href="#" class="btn btn-outline-primary">2</a>
-                                    <span class="btn btn-primary current">3</span>
-                                    <a href="#" class="btn btn-outline-primary">4</a>
-                                    <a href="#" class="btn btn-outline-primary">5</a>
-                                    <a href="#" class="btn btn-outline-primary next"><i class="fa fa-angle-double-right"></i></a>
+                                </div>
+                                <h4 style="font-size: 1.5rem; text-transform: capitalize;">{{blog.title}}</h4>
+                                <p>{{blog.description | safe | truncatewords:10}}</p>
+                            </div>
+                            <div class="card__footer" style="display: flex; padding: 1rem; margin-top: auto;">
+                                <div class="user" style="display: flex; gap: .5rem;">
+                                    <img src="{{blog.user.profile_pic.url}}" alt="user__image" class="user__image" style="border-radius: 50%; width: 40px; height: 40px;">
+                                    <div class="user__info">
+                                        <h5>{{blog.user.username}}</h5>
+                                        <small style="color: #666;">{{ blog.updated_at|timesince }} ago</small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        {% endfor %}
                     </div>
-                    <div class="col-md-4 col-sm-12">
-                        <div class="card-box mb-30">
-                            <h5 class="pd-20 h5 mb-0">Categories</h5>
-                            <div class="list-group">
-                                {% for category in categories %}
-                                <a href="{% url 'filterblogs' category.id userprofile.id %}" class="list-group-item d-flex align-items-center justify-content-between">
-                                    {{ category.name }} <span class="badge badge-primary badge-pill">{{ category.blogs.count }}</span>
-                                </a>
-                                {% endfor %}
-                            </div>
-                        </div>
-                        <div class="card-box mb-30">
-                            <h5 class="pd-20 h5 mb-0">Latest Post</h5>
-                            <div class="latest-post">
-                                <ul>
-                                    <li>
-                                        <h4><a href="#">Ut enim ad minim veniam, quis nostrud exercitation ullamco</a></h4>
-                                        <span>HTML</span>
-                                    </li>
-                                    <li>
-                                        <h4><a href="#">Lorem ipsum dolor sit amet, consectetur adipisicing elit</a></h4>
-                                        <span>Css</span>
-                                    </li>
-                                    <li>
-                                        <h4><a href="#">Ut enim ad minim veniam, quis nostrud exercitation ullamco</a></h4>
-                                        <span>jQuery</span>
-                                    </li>
-                                    <li>
-                                        <h4><a href="#">Lorem ipsum dolor sit amet, consectetur adipisicing elit</a></h4>
-                                        <span>Bootstrap</span>
-                                    </li>
-                                    <li>
-                                        <h4><a href="#">Lorem ipsum dolor sit amet, consectetur adipisicing elit</a></h4>
-                                        <span>Design</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                       
-                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="blog-pagination">
+            <div class="btn-toolbar justify-content-center mb-15">
+                <div class="btn-group">
+                    <a href="#" class="btn btn-outline-primary prev"><i class="fa fa-angle-double-left"></i></a>
+                    <a href="#" class="btn btn-outline-primary">1</a>
+                    <a href="#" class="btn btn-outline-primary">2</a>
+                    <span class="btn btn-primary current">3</span>
+                    <a href="#" class="btn btn-outline-primary">4</a>
+                    <a href="#" class="btn btn-outline-primary">5</a>
+                    <a href="#" class="btn btn-outline-primary next"><i class="fa fa-angle-double-right"></i></a>
                 </div>
             </div>
         </div>
-    </div>
     {% endblock content%}

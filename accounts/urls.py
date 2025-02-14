@@ -11,6 +11,8 @@ urlpatterns = [
     path('logout/',views.logout_view,name='logout'),
     path('blockedusers/<int:user_id>',views.blockedUsers,name='blockedusers'),
     path('unblockuser/<int:user_id>/',views.unblockUser,name='unblockuser'),
+    path('updateprofile/<int:user_id>/',views.updatUserProfile,name='updateprofile'),
+    path('updateprofilepic/<int:user_id>/',views.updateProfilePic,name='updateprofilepic'),
     path('availableusers/<int:user_id>/',views.availableUsers,name='availableusers'),
     
 ]

@@ -11,21 +11,21 @@
                 <div class="col-md-10 col-sm-12">
                     <div class="blog-detail card-box overflow-hidden mb-30">
                         <div class="blog-img">
-                            <img src="{{blog.image.url}}" alt="">
+                            <img src="{{blog.image.url}}" alt="" class="img-fluid" style="border-radius: 15px; border: 2px solid #ddd; width: 100%; height: auto;">
                         </div><br>
                         <div class="blog-caption">
                             <h3 class="mb-10 text-dark">{{blog.title}}</h3>
                             <p>{{blog.description | safe}}</p>
                         </div>
                     </div>
-                </div>
+                </div>                
             </div>
         </div>
     </div>
     <br><br>
     <div align="right"class="col-md-10 col-sm-12">
-        <a href="" class="btn btn-outline-success"onclick="confirmblogapprove">Approve Blog</a>
-        <a href="{% url "blockuser" blog.user.id %}" class="btn btn-outline-secondary" onclick="confirmblogblockuser()">Block</a>
+        <a href="" class="btn btn-outline-success"onclick="confirmblogapprove()">Approve Blog</a>
+        <a href="{% url "blockuser" blog.user.id %}" class="btn btn-outline-secondary" onclick="confirmblockuser()">Block User</a>
         <a href="" class="btn btn-outline-danger" onclick="confirmblogblock()">Delete Blog</a>
     </div>
 </div>
