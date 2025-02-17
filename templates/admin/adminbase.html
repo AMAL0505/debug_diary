@@ -57,21 +57,7 @@
             </div> {% endcomment %}
 
             <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-                    aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-cog"></i>
-                    <span>HomePage</span>
-                </a>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Home Page Options:</h6>
-                        <a class="collapse-item" href="{% url "adminhomepage" userprofile.id %}">My Home</a>
-                    </div>
-                </div>
-            </li>   
-
-            <hr class="sidebar-divider">
+             
 
             <!-- Nav Item - Utilities Collapse Menu -->
 
@@ -84,9 +70,26 @@
                 <div id="collapseBlogPage" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Blog Options:</h6>
+                        <a class="collapse-item" href="{% url "viewallblogs" %}">View All Blogs</a>
                         <a class="collapse-item" href="{% url "pendingblogs" userprofile.id %}">View Requests</a>
-                        <a class="collapse-item" href="{% url "availableusers" userprofile.id %}">Available Users</a>
                         <a class="collapse-item" href="{% url "blockedblogs" userprofile.id %}">Blocked Blogs</a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUserPage"
+                    aria-expanded="true" aria-controls="collapseUserPage">
+                    <i class="fas fa-fw fa-folder"></i>
+                    <span>User Management</span>
+                </a>
+                <div id="collapseUserPage" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">User Options:</h6>
+                        <a class="collapse-item" href="{% url "allusers" %}">View All Users</a>
+                        <a class="collapse-item" href="{% url "availableusers" userprofile.id %}">Available Users</a>
                         <a class="collapse-item" href="{% url "blockedusers" userprofile.id %}">Blocked Users</a>
                     </div>
                 </div>

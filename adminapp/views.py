@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from accounts.models import UserProfile,LoginTable
-from blogapp.models import Blog
+from blogapp.models import Blog, Comment
 
 # Create your views here.
 
 
 def adminHomePage(request,user_id):
     userprofile = UserProfile.objects.get(id=user_id)
+    blocked_users = UserProfile.objects.filter(isblocked=True).count()
     blog_list = Blog.objects.filter(is_published=False)
     unpublished_percentage = getblog_percentage()
     blog_count = Blog.objects.count(),
@@ -15,6 +16,7 @@ def adminHomePage(request,user_id):
     context = {
         'userprofile':userprofile,
         'blog_list':blog_list,
+        'blocked_users':blocked_users,
         'unpublished_percentage':unpublished_percentage,
         'blog_count':blog_count,
         'user_count':user_count,
@@ -44,8 +46,10 @@ def adminProfile(request,user_id):
 def adminBlogDetails(request,blog_id,user_id):
     userprofile = UserProfile.objects.get(id=user_id)
     blog = Blog.objects.get(id=blog_id)
+    comments = Comment.objects.filter(blog=blog, parent__isnull=True).order_by('-created_at')
     context = {
         'userprofile':userprofile,
-        'blog':blog
+        'blog':blog,
+        'comments':comments
     }
     return render(request, 'admin/admin_blog_details.html',context)

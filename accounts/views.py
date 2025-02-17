@@ -2,9 +2,9 @@
 from django.shortcuts import render,get_object_or_404, redirect
 from django.contrib import messages
 from .models import LoginTable, UserProfile 
-from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib import messages
+from django.contrib.auth import logout
 
 
 
@@ -60,6 +60,7 @@ def userRegistration(request):
 
 
 def userLogin(request):
+    print("function called") 
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -108,6 +109,34 @@ def userLogin(request):
 
 
 
+def forgot_password(request):
+    print("forgot password function called")
+    
+    # Clear old messages to prevent persistence
+    storage = messages.get_messages(request)
+    storage.used = True
+
+    if request.method == 'POST':
+        print("checking condition")
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        cpassword = request.POST.get('cpassword')
+
+        if password == cpassword:
+            print("checking passwords condition")
+            try:
+                userprofile = get_object_or_404(UserProfile, email=email)
+                userprofile.password = make_password(password)
+                userprofile.save()
+                messages.success(request, "Password reset successful! Please log in with your new password.")
+                return redirect('login')
+            except:
+                messages.error(request, "Account doesn't exist with the given email")
+        else:
+            messages.error(request, "Passwords do not match")
+
+    return render(request, 'accounts/forgot_password.html')
+
 
 
 
@@ -121,9 +150,12 @@ def userProfile(request, username):
 
 
 
+
+
 def logout_view(request):
-    request.session.flush()  # Clears all session data
-    return redirect('login')
+    logout(request)  # Logs out the user
+    messages.success(request, "You have been logged out successfully.")  # Show logout message
+    return redirect('login')  
 
 
 
@@ -157,8 +189,8 @@ def updatUserProfile(request,user_id):
         userprofile.profile_pic = request.FILES['profile_pic']
         userprofile.save()
         logintable.save()
-        return redirect('userprofile',user_id=user_id)
-    return render(request, 'user/user_profile.html',{'userprofile':userprofile})
+        return redirect(request.META.get('HTTP_REFERER', '/'))
+    return redirect(request.META.get('HTTP_REFERER', '/'))  
 
 def updateProfilePic(request,user_id):
     print("function called")
@@ -166,8 +198,8 @@ def updateProfilePic(request,user_id):
     if request.method == 'POST':
         userprofile.profile_pic = request.FILES.get('profile_pic')
         userprofile.save()
-        return redirect('userprofile',user_id=user_id)
-    return render(request, 'user/update_profile_pic.html',{'userprofile':userprofile})
+        return redirect(request.META.get('HTTP_REFERER', '/'))
+    return redirect(request.META.get('HTTP_REFERER', '/'))  
 
 def changePassword(request,user_id):
     userprofile = UserProfile.objects.get(id=user_id)
@@ -192,19 +224,14 @@ def is_admin(user):
 
 def blockUser(request, user_id):
     user = get_object_or_404(UserProfile, id=user_id)
-
-    # Check if the user is an admin
     login_entry = LoginTable.objects.filter(user_profile=user).first()
     
     if login_entry and login_entry.type.lower() == "admin":
         messages.error(request, "Admins cannot be blocked!")
         return redirect(request.META.get('HTTP_REFERER', '/'))
-
-    # Block the user (non-admin)
     user.isblocked = True
     user.save()
     messages.success(request, f"User {user.username} has been blocked.")
-    
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
@@ -235,3 +262,8 @@ def availableUsers(request,user_id):
     }
 
     return render(request, 'admin/admin_user_list.html', context)
+
+
+def allUsers(request):
+    user_list = LoginTable.objects.all()
+    return render(request,'admin/admin_view_all_user.html',{'user_list':user_list})

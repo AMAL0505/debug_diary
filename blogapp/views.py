@@ -1,7 +1,8 @@
 from django.shortcuts import render,get_object_or_404,redirect
-from .models import Blog, Category, Notification
+from .models import Blog, Category, Notification,Comment
 from accounts.models import UserProfile
 from .forms import BlogForm
+from django.contrib import messages
 
 # Create your views here.
 
@@ -15,9 +16,11 @@ def blog_list(request):
 def blogDetailsPage(request,blog_id,user_id):
     userprofile = UserProfile.objects.get(id=user_id)
     blog = Blog.objects.get(id=blog_id)
+    comments = Comment.objects.filter(blog=blog, parent__isnull=True).order_by('-created_at')
     context = {
         'blog':blog,
-        'userprofile':userprofile
+        'userprofile':userprofile,
+        'comments':comments
     }
     return render(request, 'user/blog_details.html',context)
 
@@ -53,10 +56,65 @@ def createBlog(request, user_id):
     return render(request, 'user/create_blog.html', {'form': form, 'userprofile': userprofile})
 
 
+def viewAllBlogs(request):
+    blogs = Blog.objects.all()
+    return render(request,'admin/admin_view_all_blogs.html',{'blogs':blogs})
+
+
 def userBlogs(request, user_id):
     userprofile = UserProfile.objects.get(id=user_id)
     blogs = Blog.objects.filter(user=userprofile)
     return render(request, 'user/my_blogs.html', {'blogs': blogs, 'userprofile': userprofile})
+
+
+
+def add_comment(request,blog_id,user_id):
+    if request.method == "POST":
+        user = get_object_or_404(UserProfile,id=user_id)
+        comment_text = request.POST.get("comment")
+        parent_id = request.POST.get("parent_id")
+
+        blog = get_object_or_404(Blog, id=blog_id)
+        parent_comment = Comment.objects.filter(id=parent_id).first() if parent_id else None
+
+        Comment.objects.create(
+            user=user,
+            blog=blog,
+            comment=comment_text,
+            parent=parent_comment
+        )
+
+        messages.success(request, "Comment added successfully!")
+        return redirect(request.META.get('HTTP_REFERER', '/'))
+
+    messages.error(request, "Something went wrong!")
+    return redirect(request.META.get('HTTP_REFERER', '/'))
+
+    
+
+def like_comment(request,comment_id,user_id):
+    if request.method == "POST":
+        user = get_object_or_404(UserProfile,id=user_id)
+        comment = get_object_or_404(Comment, id=comment_id)
+
+        if user in comment.likes.all():
+            comment.likes.remove(user)
+            messages.info(request, "You unliked the comment.")
+        else:
+            comment.likes.add(user)
+            messages.success(request, "You liked the comment!")
+        return redirect(request.META.get('HTTP_REFERER', '/'))
+    
+    messages.error(request, "Invalid request.")
+    return redirect(request.META.get('HTTP_REFERER', '/'))
+
+
+def get_comments(request, blog_id):
+    blog = get_object_or_404(Blog, id=blog_id)
+    comments = Comment.objects.filter(blog=blog, parent=None).order_by("-created_at")
+
+    return render(request, "blog_detail.html", {"blog": blog, "comments": comments})
+
 
 
 def updateBlog(request, blog_id, user_id):
@@ -75,12 +133,9 @@ def updateBlog(request, blog_id, user_id):
 def deleteBlog(request, blog_id, user_id):
     userprofile = get_object_or_404(UserProfile, id=user_id)
     blog = get_object_or_404(Blog, id=blog_id)  # Avoids "DoesNotExist" error
-
-    if request.method == 'POST':
-        blog.delete()
-        return redirect('userblogs', user_id=user_id)
-
-    return render(request, 'user/my_blogs.html', {'blog': blog, 'userprofile': userprofile})
+    
+    blog.delete()
+    return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
 def blockBlog(request,blog_id):
@@ -90,11 +145,20 @@ def blockBlog(request,blog_id):
     return redirect(request.META.get('HTTP_REFERER', '/')) 
 
 
+def unBlockBlog(request,blog_id):
+    blog = get_object_or_404(Blog,id=blog_id)
+    blog.is_blocked = False
+    blog.is_published = True
+    blog.save()
+    return redirect(request.META.get('HTTP_REFERER', '/')) 
+
+
 def publishBlog(request, blog_id, user_id):
     userprofile = get_object_or_404(UserProfile, id=user_id)
     blog = get_object_or_404(Blog, id=blog_id)
-
-    blog.is_published = True
+    if blog.is_blocked == True:
+        message.error()
+        blog.is_published = True
     blog.save()
 
     return redirect(request.META.get('HTTP_REFERER', '/')) 

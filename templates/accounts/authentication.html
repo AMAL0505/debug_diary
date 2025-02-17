@@ -1,101 +1,87 @@
-<!DOCTYPE html>
 {% load static %}
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login & Signup</title>
-    <link rel="stylesheet" href="{% static 'css/accounts/style.css' %}">
+    <head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css"><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="{% static "css/accounts/style.css" %}">
+  <meta charset="UTF-8">
+  <title>Blog</title>
+
 </head>
 <body>
-    <div class="cont">
-        <div class="form sign-in">
-            <form action="{% url 'login' %}" method="post">
-                {% csrf_token %}
-                <h2>Welcome Back</h2>
-                <label>
-                    <span>Username</span>
-                    <input type="text" name="username" required>
-                </label>
-                <label>
-                    <span>Password</span>
-                    <input type="password" name="password" required>
-                </label>
-                <p class="forgot-pass">Forgot your password?</p>
-                <button type="submit" class="submit">Login</button>
-            </form>
-        </div>
+<!-- partial:index.partial.html -->
+<style>
 
-        <div class="sub-cont">
-            <div class="img">
-                <div class="img__text m--up">
-                    <h2>New here?</h2>
-                    <p>Sign up and discover great opportunities!</p>
-                </div>
-                <div class="img__text m--in">
-                    <h2>One of us?</h2>
-                    <p>If you already have an account, just log in.</p>
-                </div>
-                <div class="img__btn">
-                    <span class="m--up">Sign Up</span>
-                    <span class="m--in">Login</span>
-                </div>
+</style>
+{% if messages %}
+    <div id="message-container">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show fade-message" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            <form action="{% url 'register' %}" method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="form sign-up" style="width: 640px; height: 100%; padding: 40px 40px;">
-                    <h2>Create Account</h2>
-                    <label>
-                        <span>Username</span>
-                        <input type="text" name="username" required>
-                    </label>
-                    <div style="display: flex; gap: 10px;">
-                        
-                        <label style="flex: 1;">
-                            <span>First Name</span>
-                            <input type="text" name="first_name" required>
-                        </label>
-                        <label style="flex: 1;">
-                            <span>Last Name</span>
-                            <input type="text" name="last_name" required>
-                        </label>
-                    </div>
-                    
-                    <label>
-                        <span>Email</span>
-                        <input type="email" name="email" required>
-                    </label>
-                    <div style="display: flex; gap: 10px;">
-                        
-                    </div>
-                    <label>
-                        <span>Profile Picture</span>
-                        <input type="file" name="profile_pic" accept="image/*">
-                    </label>
-                    <label>
-                        <span>Phone Number</span>
-                        <input type="tel" name="ph_no" required>
-                    </label>
-                    <div style="display: flex; gap: 10px;">
-                        <label>
-                            <span>Password</span>
-                            <input type="password" name="password" required>
-                        </label>
-                        <label>
-                            <span>Confirm Password</span>
-                            <input type="password" name="cpassword" required>
-                        </label> 
-                    </div>
-                    
-                    <button type="submit" class="submit">Sign Up</button>
-                </div>
-            </form>
-        </div>
+        {% endfor %}
     </div>
+{% endif %}
+
+<div class="container" id="container">
+	<div class="form-container sign-up-container">
+		<form action="{% url "register" %}" method='post' enctype="multipart/form-data">
+            {% csrf_token %}
+			<h1>Create Account</h1>
+			    <input type="text" name="username" placeholder="Username" required>
+                <input type="text" name="first_name" placeholder="First Name" required>
+                <input type="text" name="last_name" placeholder="Last Name" required>
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="file" name="profile_pic" placeholder="Profile Picture" accept="image/*" required>
+                <input type="tel" name="ph_no" placeholder="Contact Number" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <input type="password" name="cpassword" placeholder="Confirm Password" required>
+			<button type="submit" class="btn btn-outline-danger">sign up</button>
+		</form>
+	</div>
+	<div class="form-container sign-in-container">
+		<form action="{% url "login" %}" method="post">
+            {% csrf_token %}
+			<h1>Sign in</h1>
+			<span>Enter your credentials</span>
+			<input type="text" name ="username" placeholder="Username" required>
+			<input type="password" name ="password" placeholder="Password" required>
+			<a href="{% url "forgotpassword" %}">Forgot your password?</a>
+			<button type="submit" class="btn btn-outline-danger" onclick="signinalert()">sign in</button>
+		</form>
+	</div>
+	<div class="overlay-container">
+		<div class="overlay">
+			<div class="overlay-panel overlay-left">
+				<br> 
+                <h1> Welcome Back!</h1>
+				<p>
+        To keep connected with us please login with your info</p>
+				<button class="ghost" id="signIn" onclick="signin()">Sign In</button>
+			</div>
+			<div class="overlay-panel overlay-right"><br> 
+				<h1>Hello, Friend!</h1>
+				<p>Enter your details and start journey with us</p>
+				<button class="ghost" id="signUp" onclick="signup()">Sign Up</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- partial -->
     <script>
-        document.querySelector(".img__btn").addEventListener("click", function() {
-            document.querySelector(".cont").classList.toggle("s--signup");
-        });
-    </script>
+		document.addEventListener("DOMContentLoaded", function() {
+			setTimeout(function() {
+				let alerts = document.querySelectorAll(".fade-message");
+				alerts.forEach(function(alert) {
+					alert.style.transition = "opacity 0.5s ease";
+					alert.style.opacity = "0";
+					setTimeout(() => alert.remove(), 500);
+				});
+			}, 5000); // 5 seconds
+		});
+	</script>
+	<script src="{% static "js/accounts/scripts.js" %}"></script>
 </body>
 </html>

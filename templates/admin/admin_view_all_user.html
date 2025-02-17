@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block heading %}
-Available Users
+All Users
 
 {% endblock heading %}
 
@@ -17,26 +17,35 @@ Available Users
             <th>Last Name</th>
             <th>Actions</th>
         </tr>
-        {% for user in available_users %}
+        {% for user in user_list %}
         
         <tr>
             <td>{{forloop.counter}}</td>
             <td>  <img class="img-profile rounded-circle" style="width: 40px;height: 40px;"
                 src="{{user.user_profile.profile_pic.url}}"> 
-                {% if user.isblocked %}
+                {% if user.user_profile.isblocked %}
                 <text class="text-danger">{{user.user_profile.username}}</text>
                 {% else %}
                 <text class="">{{user.user_profile.username}}</text>
                 {% endif %}
             </td>
-            <td>{{user.first_name}}</td>
-            <td>{{user.last_name}}</td>
+            <td>{% if user.user_profile.isblocked %}
+                <text class="text-danger">{{user.first_name}}</text>
+                {% else %}
+                <text>{{user.first_name}}</text>
+                {% endif %}
+            <td>{% if user.user_profile.isblocked %}
+                <text class="text-danger">{{user.last_name}}</text>
+                {% else %}
+                <text>{{user.first_name}}</text>
+                {% endif %}</td>
             <td>
                 <form action="" method="post">
-                    {% if user.isblocked %}
-                    <a href="{% url "blockuser" user.id %}" class="btn btn-outline-danger"onclick="unblockuser()">Block User</a>
-                    {% else %}
+                    {% if user.user_profile.isblocked %}
                     <a href="{% url "unblockuser" user.id %}" class="btn btn-outline-secondary"onclick="unblockuser()">UnBlock User</a>
+                    
+                    {% else %}
+                    <a href="{% url "blockuser" user.id %}" class="btn btn-outline-danger"onclick="unblockuser()">Block User</a>
                     {% endif %}
                     
             </form>

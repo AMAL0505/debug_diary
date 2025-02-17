@@ -1,14 +1,17 @@
     {% extends "user/userbase.html" %}
     {% load static %}
 
+    {% block title %}
+    <h1>Welcome Back,  {{userprofile.username}}</h1>{% endblock title %}
     {% block content %}
-    <h1>Welcome Back,  {{userprofile.username}}</h1><br>
+  <br>
     <div class="col-md-12 col-sm-12">
         <div class="blog-wrap">
             <ul>
                 <li>
-                    <div class="container" style="display: flex; flex-wrap: wrap; justify-content: center; max-width: 1200px; margin-block: 2rem; gap: 2rem;">
+                    <div class="container" style="display: flex; flex-wrap: wrap; justify-content: left; max-width: 1200px; margin-block: 2rem; gap: 2rem;">
                         {% for blog in blog_list %}
+                        <a href="{% url "blogdetails" blog.id userprofile.id %}">
                         <div class="card" style="display: flex; flex-direction: column; width: clamp(20rem, calc(20rem + 2vw), 22rem); overflow: hidden; box-shadow: 0 .1rem 1rem rgba(0, 0, 0, 0.1); border-radius: 1em; background: linear-gradient(to right, #FFFFFF, #ECE9E6);">
                             <div class="card__header">
                                 <img src="{{blog.image.url}}" alt="card__image" class="card__image" width="600" style="max-width: 100%; display: block; object-fit: cover;">
@@ -32,6 +35,7 @@
                                 </div>
                             </div>
                         </div>
+                        </a>
                         {% endfor %}
                     </div>
                 </li>

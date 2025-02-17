@@ -36,7 +36,7 @@
                                                 <div class="" style="margin:auto;">
                                                     <a href="{% url "blogdetails" blog.id userprofile.id %}" class="btn btn-outline-primary">Read More</a>
                                                     <a href="{% url "updateblog" blog.id userprofile.id %}" class="btn btn-outline-warning">Edit</a>
-                                                    <a href="{% url "deleteblog" blog.id userprofile.id %}" class="btn btn-outline-danger">Delete</a>
+                                                    <a href="{% url "deleteblog" blog.id userprofile.id %}" class="btn btn-outline-danger"onclick="confirmDelete()">Delete</a>
                                                 </div>
                                                 
                                             </div>

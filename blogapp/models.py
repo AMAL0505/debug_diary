@@ -31,13 +31,20 @@ class Blog(models.Model):
 
 class Comment(models.Model):
     comment = models.TextField()
-    blog = models.ForeignKey(Blog,on_delete=models.CASCADE)
-    user = models.ForeignKey('accounts.UserProfile',on_delete=models.CASCADE)
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
+    user = models.ForeignKey('accounts.UserProfile', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+    likes = models.ManyToManyField('accounts.UserProfile', related_name="liked_comments", blank=True)
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name="replies")
+
     def __str__(self):
-        return self.comment
+        return self.comment[:50]  # Return first 50 characters for better readability
+
+    @property
+    def like_count(self):
+        return self.likes.count()
+
     
 
 class Notification(models.Model):
