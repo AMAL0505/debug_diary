@@ -1,6 +1,8 @@
 # accounts/views.py
 from django.shortcuts import render,get_object_or_404, redirect
 from django.contrib import messages
+
+from blogapp.models import Notification
 from .models import LoginTable, UserProfile 
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib import messages
@@ -222,16 +224,31 @@ def is_admin(user):
         return False  # Default to non-admin if no entry is found
 
 
-def blockUser(request, user_id):
+def blockUser (request, user_id):
     user = get_object_or_404(UserProfile, id=user_id)
     login_entry = LoginTable.objects.filter(user_profile=user).first()
     
-    if login_entry and login_entry.type.lower() == "admin":
-        messages.error(request, "Admins cannot be blocked!")
-        return redirect(request.META.get('HTTP_REFERER', '/'))
-    user.isblocked = True
-    user.save()
-    messages.success(request, f"User {user.username} has been blocked.")
+    if request.method == 'POST':
+        if login_entry and login_entry.type.lower() == "admin":
+            messages.error(request, "Admins cannot be blocked!")
+            return redirect(request.META.get('HTTP_REFERER', '/'))
+        
+        # Toggle block status
+        user.isblocked = not user.isblocked
+        user.save()
+        
+        if user.isblocked:
+            message = "Your account has been blocked by the admin."
+            Notification.objects.create(
+                from_user=user,
+                to_user=user,
+                notification_type="ACCOUNT_BLOCKED",
+                message=message,
+            )
+            messages.success(request, f"User  {user.username} has been blocked.")
+        else:
+            messages.success(request, f"User  {user.username} has been unblocked.")
+    
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
 

@@ -42,10 +42,10 @@ All Users
             <td>
                 <form action="" method="post">
                     {% if user.user_profile.isblocked %}
-                    <a href="{% url "unblockuser" user.id %}" class="btn btn-outline-secondary"onclick="unblockuser()">UnBlock User</a>
+                    <a href="{% url "unblockuser" user.id %}" class="btn btn-outline-success"onclick="unblockuser()">UnBlock User</a>
                     
                     {% else %}
-                    <a href="{% url "blockuser" user.id %}" class="btn btn-outline-danger"onclick="unblockuser()">Block User</a>
+                    <a href="{% url "blockuser" user.id %}" class="btn btn-outline-secondary"onclick="unblockuser()">Block User</a>
                     {% endif %}
                     
             </form>

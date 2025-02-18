@@ -48,12 +48,32 @@ class Comment(models.Model):
     
 
 class Notification(models.Model):
-    from_user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name="sent_notifications")
-    to_user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name="received_notifications")
-    message = models.TextField()
-    is_read = models.BooleanField(default=False)  # Track if the user has seen it
-    created_at = models.DateTimeField(default=now)
+    NOTIFICATION_TYPES = [
+        ("ACCOUNT_BLOCKED", "Account Blocked"),
+        ("POST_BLOCKED", "Post Blocked"),
+        ("GENERAL_ALERT", "General Alert"),
+    ]
+
+    from_user = models.ForeignKey(  
+        UserProfile, null=True, blank=True, on_delete=models.SET_NULL, related_name="sent_notifications"
+    )  # Admin who sent the notification
+    to_user = models.ForeignKey(
+        UserProfile, on_delete=models.CASCADE, related_name="received_notifications"
+    )
+    blog = models.ForeignKey(  
+        Blog, null=True, blank=True, on_delete=models.CASCADE, related_name="user_notifications"
+    )  # Used only when blocking a post
+    message = models.TextField()  # Message will now contain the reason
+    notification_type = models.CharField(max_length=20, choices=NOTIFICATION_TYPES, default="GENERAL_ALERT")
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Notification from {self.from_user.username} to {self.to_user.username}"
+        sender = self.from_user.username if self.from_user else "Admin"
+        if self.notification_type == "POST_BLOCKED":
+            return f"Post Blocked by {sender}: {self.to_user.username}'s post '{self.blog.title}'"
+        elif self.notification_type == "ACCOUNT_BLOCKED":
+            return f"Account Blocked by {sender}: {self.to_user.username}"
+        return f"Notification ({self.notification_type}) from {sender} to {self.to_user.username}"
+
 

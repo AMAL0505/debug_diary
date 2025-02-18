@@ -3,11 +3,9 @@
 
 {% block heading %}
 Available Users
-
 {% endblock heading %}
 
 {% block main-content %}
-
 <div class="fluid-container">
     <table class="table table-bordered">
         <tr>
@@ -18,40 +16,36 @@ Available Users
             <th>Actions</th>
         </tr>
         {% for user in available_users %}
-        
         <tr>
-            <td>{{forloop.counter}}</td>
-            <td>  <img class="img-profile rounded-circle" style="width: 40px;height: 40px;"
-                src="{{user.user_profile.profile_pic.url}}"> 
+            <td>{{ forloop.counter }}</td>
+            <td>
+                <img class="img-profile rounded-circle" style="width: 40px; height: 40px;" src="{{ user.user_profile.profile_pic.url }}">
                 {% if user.isblocked %}
-                <text class="text-danger">{{user.user_profile.username}}</text>
+                <text class="text-danger">{{ user.user_profile.username }}</text>
                 {% else %}
-                <text class="">{{user.user_profile.username}}</text>
+                <text class="">{{ user.user_profile.username }}</text>
                 {% endif %}
             </td>
-            <td>{{user.first_name}}</td>
-            <td>{{user.last_name}}</td>
+            <td>{{ user.first_name }}</td>
+            <td>{{ user.last_name }}</td>
             <td>
-                <form action="" method="post">
+                <form action="{% url 'blockuser' user.id %}" method="post" onsubmit="return unblockuser();">
+                    {% csrf_token %}
                     {% if user.isblocked %}
-                    <a href="{% url "blockuser" user.id %}" class="btn btn-outline-danger"onclick="unblockuser()">Block User</a>
+                    <button type="submit" class="btn btn-outline-danger">Unblock User</button>
                     {% else %}
-                    <a href="{% url "unblockuser" user.id %}" class="btn btn-outline-secondary"onclick="unblockuser()">UnBlock User</a>
+                    <button type="submit" class="btn btn-outline-secondary">Block User</button>
                     {% endif %}
-                    
-            </form>
+                </form>
             </td>
         </tr>
-        
         {% endfor %}
-       
     </table>
-
 </div>
+
 <script>
     function unblockuser() {
-        return confirm("Are you sure you want to Unblock this user?");
+        return confirm("Are you sure you want to change the user's block status?");
     }
 </script>
-
-{% endblock main-content%}
+{% endblock main-content %}

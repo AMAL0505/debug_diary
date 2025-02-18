@@ -130,19 +130,50 @@ def updateBlog(request, blog_id, user_id):
     return render(request, 'user/update_blog.html', {'form': form, 'userprofile': userprofile,'blog':blog})
 
 
-def deleteBlog(request, blog_id, user_id):
-    userprofile = get_object_or_404(UserProfile, id=user_id)
+def deleteBlog(request, blog_id,user_id):
+    user = get_object_or_404(UserProfile,id=user_id)
     blog = get_object_or_404(Blog, id=blog_id)  # Avoids "DoesNotExist" error
-    
-    blog.delete()
+    blogs = Blog.objects.all()
+    if request.method == 'POST':
+        reason = request.POST.get('reason','no reason mentioned')
+        Notification.objects.create(
+            from_user=user,  # Assuming the admin is the user blocking the blog
+            to_user=blog.user,  # The user who created the blog
+            notification_type="POST_BLOCKED",
+            message=f"Your blog '{blog.title}' has been deleted by the admin. Reason: {reason}",
+        )
+        blog.delete()
+        messages.success(request, f"Blog '{blog.title}' has been deleted.")
+        return render(request,'admin/admin_view_all_blogs.html',{'blogs':blogs})
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
-def blockBlog(request,blog_id):
-    blog = get_object_or_404(Blog,id=blog_id)
-    blog.is_blocked = True
-    blog.save()
-    return redirect(request.META.get('HTTP_REFERER', '/')) 
+def blockBlog(request, blog_id,user_id):
+    user = get_object_or_404(UserProfile,id =user_id)
+    blog = get_object_or_404(Blog, id=blog_id)
+    
+    if request.method == 'POST':
+        # Get the reason for blocking from the form
+        block_reason = request.POST.get('block_reason', 'No reason provided.')
+        
+        # Block the blog
+        blog.is_published = False
+        blog.is_blocked = True
+        blog.save()
+        
+        # Create a notification for the user who authored the blog
+        Notification.objects.create(
+            from_user=user,  # Assuming the admin is the user blocking the blog
+            to_user=blog.user,  # The user who created the blog
+            blog=blog,  # Reference to the blocked blog
+            notification_type="POST_BLOCKED",
+            message=f"Your blog '{blog.title}' has been blocked by the admin. Reason: {block_reason}",
+        )
+        
+        messages.success(request, f"Blog '{blog.title}' has been blocked.")
+        return redirect(request.META.get('HTTP_REFERER', '/'))
+    
+    return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
 def unBlockBlog(request,blog_id):
@@ -153,12 +184,9 @@ def unBlockBlog(request,blog_id):
     return redirect(request.META.get('HTTP_REFERER', '/')) 
 
 
-def publishBlog(request, blog_id, user_id):
-    userprofile = get_object_or_404(UserProfile, id=user_id)
+def publishBlog(request, blog_id):
     blog = get_object_or_404(Blog, id=blog_id)
-    if blog.is_blocked == True:
-        message.error()
-        blog.is_published = True
+    blog.is_published = True
     blog.save()
 
     return redirect(request.META.get('HTTP_REFERER', '/')) 
@@ -166,7 +194,7 @@ def publishBlog(request, blog_id, user_id):
 
 def pendingBlogs(request, user_id):
     userprofile = get_object_or_404(UserProfile, id=user_id)
-    blogs = Blog.objects.filter(is_published=False)
+    blogs = Blog.objects.filter(is_published=False, is_blocked=False)
     context = {
         'blogs': blogs,
         'userprofile': userprofile
@@ -195,3 +223,17 @@ def createNotification(request, from_user_id, to_user_id):
         notification.save()
 
     return redirect(request.META.get('HTTP_REFERER', '/'))  # Redirect to previous page
+
+
+def mark_all_notifications_read(request,user_id):
+    """Marks all notifications as read"""
+    user = get_object_or_404(UserProfile,id=user_id)
+    Notification.objects.filter(to_user=user, is_read=False).update(is_read=True)
+    return redirect(request.META.get('HTTP_REFERER', '/'))
+
+
+def mark_notification_read(request, notification_id,user_id):
+    """Marks a single notification as read"""
+    user = get_object_or_404(UserProfile,id=user_id)
+    Notification.objects.filter(id=notification_id, to_user=user).update(is_read=True)
+    return redirect(request.META.get('HTTP_REFERER', '/'))

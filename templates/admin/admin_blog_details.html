@@ -2,8 +2,21 @@
 
 {% load static %}
 
+
 {% block main-content %}
 
+{% if messages %}
+    <div id="message-container">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show fade-message" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
 <div class="min-height-200px">
     <div class="blog-wrap">
         <div class="container pd-0">
@@ -87,12 +100,84 @@
         </div>
     </div>
     <br><br>
-    <div align="right"class="col-md-10 col-sm-12">
-        <a href="" class="btn btn-outline-success"onclick="confirmblogapprove()">Approve Blog</a>
-        <a href="{% url "blockuser" blog.user.id %}" class="btn btn-outline-secondary" onclick="confirmblockuser()">Block User</a>
-        <a href="{% url "blockblog" blog.id %}" class="btn btn-outline-secondary" onclick="confirmblockuser()">Block Blog</a>
-        <a href="" class="btn btn-outline-danger" onclick="confirmblogblock()">Delete Blog</a>
+    <div align="right" class="col-md-10 col-sm-12">
+        {% if blog.is_published %}
+        <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#blockModal{{ blog.id }}">Block Blog</button>
+        {% else %}
+            <a href="{% url 'publishblog' blog.id %}" class="btn btn-outline-success" onclick="confirmblogapprove()">Approve Blog</a>
+        {% endif %}
+        
+        {% if not blog.user.isblocked %}
+        <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#blockModal{{ blog.id }}">Block User</button>
+        {% else %}
+            <a href="{% url 'unblockuser' blog.user.id %}" class="btn btn-outline-secondary" onclick="confirmblockuser()">Unblock User</a>
+        {% endif %}
+        
+        <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#deleteModal{{ blog.id }}">Delete Blog</button>
+    
+    
     </div>
+
+
+     <!-- Modal for blocking blog -->
+     <div class="modal fade" id="blockModal{{ blog.id }}" tabindex="-1" role="dialog" aria-labelledby="blockModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="blockModalLabel">Block Blog</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'blockblog' blog.id userprofile.id %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="blockReason">Reason for Blocking</label>
+                            <textarea class="form-control" id="blockReason" name="block_reason" required></textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Confirm Block</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+     <!-- Modal for deleting blog -->
+        <div class="modal fade" id="deleteModal{{ blog.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">Block Blog</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{% url 'deleteblog' blog.id userprofile.id %}" method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="deleteReason">Reason for Deleting</label>
+                                <textarea class="form-control" id="deleteReason" name="reason" required></textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Confirm Delete</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
 </div>
 
 <script>
